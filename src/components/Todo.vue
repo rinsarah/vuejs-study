@@ -44,7 +44,6 @@
             @click="removeTodo(index)"
           >
             &times;
-            <!-- <button> DELETE </button> -->
           </div>
         </div>
       </div>
@@ -75,17 +74,26 @@
         </button>
       </div>
     </div>
+    <button @click="displayDeleted">Deleted task</button>
+    <div v-if="displayDelete">
+      <div v-for="deltasks in deleted" :key="deltasks.id">
+        {{ deltasks.task }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Todo List',
-  data () {
+  data() {
     return {
       newList: '',
       newId: 4,
       filter: 'all',
+      displayDelete: false,
+      deleted: [],
+      delId: 1,
       currentList: [
         {
           id: 1,
@@ -116,7 +124,7 @@ export default {
     }
   },
   methods: {
-    addTodo () {
+    addTodo() {
       if (this.newList.trim().length === 0) {
         alert('No task written, please check!')
         return
@@ -131,26 +139,39 @@ export default {
       this.newList = ''
       this.newId++
     },
-    removeTodo (index) {
+    removeTodo(index) {
+      this.deleted.push({
+        id: this.delId,
+        task: this.currentList[index].task
+      })
+
       this.currentList.splice(index, 1)
+
+      this.delId++
+      alert(this.delId)
     },
-    editTodo (item) {
+    editTodo(item) {
       item.editing = true
     },
-    editDone (item) {
+    editDone(item) {
       if (item.task.trim().length === 0) {
         alert('No task written, please check!')
         return
       }
       item.editing = false
     },
-    markComplete (item) {
+    markComplete(item) {
       alert('Task completed!')
       item.complete = true
+    },
+    displayDeleted() {
+      if (!this.displayDelete) this.displayDelete = true
+      else this.displayDelete = false
+      alert(this.displayDelete)
     }
   },
   computed: {
-    tasksFilter () {
+    tasksFilter() {
       if (this.filter === 'all') {
         return this.currentList
       } else if (this.filter === 'active') {
